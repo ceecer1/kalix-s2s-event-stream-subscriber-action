@@ -1,0 +1,30 @@
+
+syntax = "proto3";
+
+package customer.action;
+
+import "google/protobuf/empty.proto";
+import "kalix/annotations.proto";
+import "customer/api/customer_api.proto";
+import "customer/api/publisher_api.proto";
+
+option java_outer_classname = "CustomerActionProto"; 
+
+service CustomerAction {
+  option (kalix.codegen) = {
+    action: {} 
+  };
+
+  option (kalix.service).eventing.in.direct = { // <1>
+    service: "customer-registry" // <2>
+    event_stream_id: "customer_events" // <3>
+  };
+
+  rpc ProcessCustomerCreated(api.Created) returns (google.protobuf.Empty) { // <4>
+  }
+
+  rpc ProcessCustomerNameChanged(api.NameChanged) returns (google.protobuf.Empty) {
+  }
+
+  rpc Create(customer.api.Customer) returns (google.protobuf.Empty) {}
+}
